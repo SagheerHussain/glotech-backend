@@ -1,25 +1,37 @@
 const mongoose = require("mongoose");
 
 const serviceStatsSchema = new mongoose.Schema({
-  service_id: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
-  stats: {
-    en: {
-      projectsDelivered: { type: Number, required: true },
-      clients: { type: Number, required: true },
-      yearsActive: { type: Number, required: true },
-      awards: { type: Number, required: true },
+  category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+  statOne: {
+    count: { type: Number, required: true },
+    title: {
+      en: { type: String, required: true },
+      ar: { type: String, required: true },
+      fr: { type: String, required: true },
     },
-    ar: {
-      projectsDelivered: { type: Number, required: true },
-      clients: { type: Number, required: true },
-      yearsActive: { type: Number, required: true },
-      awards: { type: Number, required: true },
+  },
+  statTwo: {
+    count: { type: Number, required: true },
+    title: {
+      en: { type: String, required: true },
+      ar: { type: String, required: true },
+      fr: { type: String, required: true },
     },
-    fr: {
-      projectsDelivered: { type: Number, required: true },
-      clients: { type: Number, required: true },
-      yearsActive: { type: Number, required: true },
-      awards: { type: Number, required: true },
+  },
+  statThree: {
+    count: { type: Number, required: true },
+    title: {
+      en: { type: String, required: true },
+      ar: { type: String, required: true },
+      fr: { type: String, required: true },
+    },
+  },
+  statFour: {
+    count: { type: Number, required: true },
+    title: {
+      en: { type: String, required: true },
+      ar: { type: String, required: true },
+      fr: { type: String, required: true },
     },
   },
 });

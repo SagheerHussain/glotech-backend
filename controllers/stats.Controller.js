@@ -1,33 +1,39 @@
-const ServiceStats = require("../models/Stats.Model"); // Import the ServiceStats model
+const Stats = require("../models/Stats.Model"); // Import the ServiceStats model
+const Category = require("../models/Category.Model");
 
 // Create Service Stats
-const createServiceStats = async (req, res) => {
+const createStats = async (req, res) => {
   try {
-    const { service_id, stats } = req.body;
+    const { category, statOne, statTwo, statThree, statFour } = req.body;
 
-    if (!service_id || !stats) {
+    if (!category || !statOne || !statTwo || !statThree || !statFour) {
       return res
         .status(400)
-        .json({ message: "Service ID and stats are required", success: false });
+        .json({ message: "Category and stats are required", success: false });
+    }
+
+    const isExist = await Category.findById({ _id: category });
+
+    if (!isExist) {
+      return res
+        .status(404)
+        .json({ message: "Category not found", success: false });
     }
 
     // Create a new ServiceStats document
-    const newStats = await ServiceStats.create({
-      service_id,
-      stats: {
-        en: stats.en,
-        ar: stats.ar,
-        fr: stats.fr,
-      },
+    const newStats = await Stats.create({
+      category,
+      statOne,
+      statTwo,
+      statThree,
+      statFour,
     });
 
-    return res
-      .status(201)
-      .json({
-        message: "Service stats created successfully",
-        newStats,
-        success: true,
-      });
+    return res.status(201).json({
+      message: "Stats created successfully",
+      data: newStats,
+      success: true,
+    });
   } catch (error) {
     console.error(error);
     return res
@@ -37,15 +43,19 @@ const createServiceStats = async (req, res) => {
 };
 
 // Get all Service Stats
-const getServiceStats = async (req, res) => {
+const getStats = async (req, res) => {
   try {
-    const stats = await ServiceStats.find();
+    const stats = await Stats.find().populate("category");
     if (!stats.length) {
       return res
         .status(404)
-        .json({ message: "No service stats found", success: false });
+        .json({ message: "No stats found", success: false });
     }
-    return res.json({ data: stats, success: true, message: "Stats retrieved successfully" });
+    return res.json({
+      data: stats,
+      success: true,
+      message: "Stats retrieved successfully",
+    });
   } catch (error) {
     console.error(error);
     return res
@@ -55,82 +65,109 @@ const getServiceStats = async (req, res) => {
 };
 
 // Get Service Stats by ID
-const getServiceStatsById = async (req, res) => {
+const getStatsById = async (req, res) => {
   try {
     const { id } = req.params;
-    const stats = await ServiceStats.findById({ _id: id });
+    const stats = await Stats.findById({ _id: id }).populate("category");
 
     if (!stats) {
-      return res.status(404).json({ message: "Service stats not found", success: false });
+      return res
+        .status(404)
+        .json({ message: "Service stats not found", success: false });
     }
 
-    return res.json({ data: stats, success: true, message: "Stats retrieved successfully" });
+    return res.status(200).json({
+      data: stats,
+      success: true,
+      message: "Stats retrieved successfully",
+    });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error fetching service stats", success: false });
+    return res
+      .status(500)
+      .json({ message: "Error fetching service stats", success: false });
   }
 };
 
 // Update Service Stats
-const updateServiceStats = async (req, res) => {
+const updateStats = async (req, res) => {
   try {
     const { id } = req.params;
-    const { stats } = req.body;
+    const { category, statOne, statTwo, statThree, statFour } = req.body;
 
-    if (!stats) {
-      return res.status(400).json({ message: "Stats are required", success: false });
+    const isExist = await Category.findById({ _id: category });
+
+    if (!isExist) {
+      return res
+        .status(404)
+        .json({ message: "Category not found", success: false });
     }
 
-    const updatedStats = await ServiceStats.findByIdAndUpdate(
+    if (!category || !statOne || !statTwo || !statThree || !statFour) {
+      return res
+        .status(400)
+        .json({ message: "Stats are required", success: false });
+    }
+
+    const updatedStats = await Stats.findByIdAndUpdate(
       { _id: id },
       {
-        $set: {
-          stats: {
-            en: stats.en,
-            ar: stats.ar,
-            fr: stats.fr,
-          },
-        },
+        category,
+        statOne,
+        statTwo,
+        statThree,
+        statFour,
       },
       { new: true } // Return the updated document
     );
 
     if (!updatedStats) {
-      return res.status(404).json({ message: "Service stats not found", success: false });
+      return res
+        .status(404)
+        .json({ message: "Service stats not found", success: false });
     }
 
     return res.json({
       message: "Service stats updated successfully",
       data: updatedStats,
-      success: true
+      success: true,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error updating service stats", success: false });
+    return res
+      .status(500)
+      .json({ message: "Error updating service stats", success: false });
   }
 };
 
 // Delete Service Stats
-const deleteServiceStats = async (req, res) => {
+const deleteStats = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedStats = await ServiceStats.findByIdAndDelete({ _id: id });
+    const deletedStats = await Stats.findByIdAndDelete({ _id: id });
 
     if (!deletedStats) {
-      return res.status(404).json({ message: "Service stats not found", success: false });
+      return res
+        .status(404)
+        .json({ message: "Stats not found", success: false });
     }
 
-    return res.json({ message: "Service stats deleted successfully", success: true });
+    return res.json({
+      message: "Stats deleted successfully",
+      success: true,
+    });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error deleting service stats", success: false });
+    return res
+      .status(500)
+      .json({ message: "Error deleting service stats", success: false });
   }
 };
 
 module.exports = {
-  createServiceStats,
-  getServiceStats,
-  getServiceStatsById,
-  updateServiceStats,
-  deleteServiceStats,
+  createStats,
+  getStats,
+  getStatsById,
+  updateStats,
+  deleteStats,
 };
