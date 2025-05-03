@@ -1,25 +1,37 @@
 const mongoose = require("mongoose");
 
 const overallStatsSchema = new mongoose.Schema({
-  stats: {
-    en: {
-      projectsDelivered: { type: Number, required: true },
-      clients: { type: Number, required: true },
-      yearsActive: { type: Number, required: true },
-      awards: { type: Number, required: true },
+  projectsDelivered: {
+    title: {
+      en: { type: String, required: true },
+      ar: { type: String, required: true },
+      fr: { type: String, required: true },
     },
-    ar: {
-      projectsDelivered: { type: Number, required: true },
-      clients: { type: Number, required: true },
-      yearsActive: { type: Number, required: true },
-      awards: { type: Number, required: true },
+    count: { type: String, required: true },
+  },
+  clients: {
+    title: {
+      en: { type: String, required: true },
+      ar: { type: String, required: true },
+      fr: { type: String, required: true },
     },
-    fr: {
-      projectsDelivered: { type: Number, required: true },
-      clients: { type: Number, required: true },
-      yearsActive: { type: Number, required: true },
-      awards: { type: Number, required: true },
+    count: { type: String, required: true },
+  },
+  divisions: {
+    title: {
+      en: { type: String, required: true },
+      ar: { type: String, required: true },
+      fr: { type: String, required: true },
     },
+    count: { type: String, required: true },
+  },
+  awards: {
+    title: {
+      en: { type: String, required: true },
+      ar: { type: String, required: true },
+      fr: { type: String, required: true },
+    },
+    count: { type: String, required: true },
   },
 });
 

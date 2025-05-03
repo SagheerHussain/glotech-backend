@@ -3,9 +3,9 @@ const OverallStats = require("../models/OverallStats.Model");
 // Create Overall Stats
 const createOverallStats = async (req, res) => {
   try {
-    const { stats } = req.body;
+    const { projectsDelivered, clients, divisions, awards } = req.body;
 
-    if (!stats) {
+    if (!projectsDelivered || !clients || !divisions || !awards) {
       return res
         .status(400)
         .json({ message: "Stats are required", success: false });
@@ -13,10 +13,37 @@ const createOverallStats = async (req, res) => {
 
     // Create a new OverallStats document
     const newOverallStats = await OverallStats.create({
-      stats: {
-        en: stats.en,
-        ar: stats.ar,
-        fr: stats.fr,
+      projectsDelivered: {
+        title: {
+          en: projectsDelivered.title.en,
+          ar: projectsDelivered.title.ar,
+          fr: projectsDelivered.title.fr,
+        },
+        count: projectsDelivered.count,
+      },
+      clients: {
+        title: {
+          en: clients.title.en,
+          ar: clients.title.ar,
+          fr: clients.title.fr,
+        },
+        count: clients.count,
+      },
+      divisions: {
+        title: {
+          en: divisions.title.en,
+          ar: divisions.title.ar,
+          fr: divisions.title.fr,
+        },
+        count: divisions.count,
+      },
+      awards: {
+        title: {
+          en: awards.title.en,
+          ar: awards.title.ar,
+          fr: awards.title.fr,
+        },
+        count: awards.count,
       },
     });
 
@@ -55,25 +82,69 @@ const getOverallStats = async (req, res) => {
   }
 };
 
+// Get Overall Stats By ID
+const getOverallStatsById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const overallStats = await OverallStats.findById({ _id: id });
+    if (!overallStats) {
+      return res
+        .status(404)
+        .json({ message: "Overall stats not found", success: false });
+    }
+    return res.json({
+      data: overallStats,
+      success: true,
+      message: "Overall stats retrieved successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Error fetching overall stats", success: false });
+  }
+};
+
 // Update Overall Stats
 const updateOverallStats = async (req, res) => {
   try {
     const { id } = req.params;
-    const { stats } = req.body;
-
-    if (!stats) {
-      return res.status(400).json({ message: "Stats are required" });
-    }
+    const { projectsDelivered, clients, divisions, awards } = req.body;
 
     const updatedOverallStats = await OverallStats.findByIdAndUpdate(
       { _id: id },
       {
-        $set: {
-          stats: {
-            en: stats.en,
-            ar: stats.ar,
-            fr: stats.fr,
+        projectsDelivered: {
+          title: {
+            en: projectsDelivered.title.en,
+            ar: projectsDelivered.title.ar,
+            fr: projectsDelivered.title.fr,
           },
+          count: projectsDelivered.count,
+        },
+        clients: {
+          title: {
+            en: clients.title.en,
+            ar: clients.title.ar,
+            fr: clients.title.fr,
+          },
+          count: clients.count,
+        },
+        divisions: {
+          title: {
+            en: divisions.title.en,
+            ar: divisions.title.ar,
+            fr: divisions.title.fr,
+          },
+          count: divisions.count,
+        },
+        awards: {
+          title: {
+            en: awards.title.en,
+            ar: awards.title.ar,
+            fr: awards.title.fr,
+          },
+          count: awards.count,
         },
       },
       { new: true } // Return the updated document
@@ -87,7 +158,7 @@ const updateOverallStats = async (req, res) => {
 
     return res.json({
       message: "Overall stats updated successfully",
-      updatedOverallStats,
+      data: updatedOverallStats,
       success: true,
     });
   } catch (error) {
@@ -127,6 +198,7 @@ const deleteOverallStats = async (req, res) => {
 module.exports = {
   createOverallStats,
   getOverallStats,
+  getOverallStatsById,
   updateOverallStats,
   deleteOverallStats,
 };

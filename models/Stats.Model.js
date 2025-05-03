@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const serviceStatsSchema = new mongoose.Schema({
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
   statOne: {
-    count: { type: Number, required: true },
+    count: { type: String, required: true },
     title: {
       en: { type: String, required: true },
       ar: { type: String, required: true },
@@ -11,7 +11,7 @@ const serviceStatsSchema = new mongoose.Schema({
     },
   },
   statTwo: {
-    count: { type: Number, required: true },
+    count: { type: String, required: true },
     title: {
       en: { type: String, required: true },
       ar: { type: String, required: true },
@@ -19,7 +19,7 @@ const serviceStatsSchema = new mongoose.Schema({
     },
   },
   statThree: {
-    count: { type: Number, required: true },
+    count: { type: String, required: true },
     title: {
       en: { type: String, required: true },
       ar: { type: String, required: true },
@@ -27,7 +27,7 @@ const serviceStatsSchema = new mongoose.Schema({
     },
   },
   statFour: {
-    count: { type: Number, required: true },
+    count: { type: String, required: true },
     title: {
       en: { type: String, required: true },
       ar: { type: String, required: true },
