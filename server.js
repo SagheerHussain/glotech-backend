@@ -18,8 +18,6 @@ const allowedOrigins = [
 const PORT = process.env.PORT || 5000;
 
 // Built In Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -33,6 +31,18 @@ app.use(
     credentials: true,
   })
 );
+
+app.use((req, res, next) => {
+  if (
+    req.headers["content-type"] &&
+    req.headers["content-type"].includes("multipart/form-data")
+  ) {
+    return next(); // Skip body parsing for file upload routes
+  }
+  express.json()(req, res, () => {
+    express.urlencoded({ extended: true })(req, res, next);
+  });
+});
 
 // Import Routes
 const aboutRoute = require("./routes/about.Route");

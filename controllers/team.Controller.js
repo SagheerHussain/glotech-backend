@@ -4,27 +4,27 @@ const cloudinary = require("../cloudinary");
 // Create Team - Adds a new team member
 const createTeam = async (req, res) => {
   try {
-    const { name, designation } = req.body;
+    const {
+      name_en, name_ar, name_fr,
+      designation_en, designation_ar, designation_fr,
+    } = req.body;
 
-    if (!name || !designation || !req.file) {
-      return res
-        .status(400)
-        .json({ message: "All fields are required", success: false });
+    if (!name_en || !designation_en || !req.file) {
+      return res.status(400).json({ message: "All fields are required", success: false });
     }
 
     const imgPath = await cloudinary.uploader.upload(req.file.path);
 
-    // Create a new Team document
     const newTeam = await Team.create({
       name: {
-        en: name.en,
-        ar: name.ar,
-        fr: name.fr,
+        en: name_en,
+        ar: name_ar,
+        fr: name_fr,
       },
       designation: {
-        en: designation.en,
-        ar: designation.ar,
-        fr: designation.fr,
+        en: designation_en,
+        ar: designation_ar,
+        fr: designation_fr,
       },
       image: imgPath.secure_url,
     });
@@ -35,7 +35,7 @@ const createTeam = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error in createTeam:", error);
     return res
       .status(500)
       .json({ message: "Error creating team member", success: false });
@@ -92,29 +92,33 @@ const getTeamMember = async (req, res) => {
 const updateTeamMember = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, designation } = req.body;
+    const {
+      name_en, name_ar, name_fr,
+      designation_en, designation_ar, designation_fr,
+    } = req.body;
 
     let imgPath = "";
     if (req.file) {
       imgPath = await cloudinary.uploader.upload(req.file.path);
     }
- 
+
+    const teamMember = await Team.findById({ _id: id });
 
     const updatedTeamMember = await Team.findByIdAndUpdate(
       { _id: id },
       {
         $set: {
           name: {
-            en: name.en,
-            ar: name.ar,
-            fr: name.fr,
+            en: name_en || teamMember.name.en,
+            ar: name_ar || teamMember.name.ar,
+            fr: name_fr || teamMember.name.fr,
           },
           designation: {
-            en: designation.en,
-            ar: designation.ar,
-            fr: designation.fr,
+            en: designation_en || teamMember.designation.en,
+            ar: designation_ar || teamMember.designation.ar,
+            fr: designation_fr || teamMember.designation.fr,
           },
-          image: imgPath ? imgPath.secure_url : updatedTeamMember.image,
+          image: imgPath ? imgPath.secure_url : teamMember.image,
         },
       },
       { new: true } // Return the updated document
@@ -145,13 +149,20 @@ const deleteTeamMember = async (req, res) => {
     const deletedTeamMember = await Team.findByIdAndDelete({ _id: id });
 
     if (!deletedTeamMember) {
-      return res.status(404).json({ message: "Team member not found", success: false });
+      return res
+        .status(404)
+        .json({ message: "Team member not found", success: false });
     }
 
-    return res.json({ message: "Team member deleted successfully", success: true });
+    return res.json({
+      message: "Team member deleted successfully",
+      success: true,
+    });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error deleting team member", success: false });
+    return res
+      .status(500)
+      .json({ message: "Error deleting team member", success: false });
   }
 };
 
