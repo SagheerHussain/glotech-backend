@@ -37,7 +37,7 @@ app.use((req, res, next) => {
     req.headers["content-type"] &&
     req.headers["content-type"].includes("multipart/form-data")
   ) {
-    return next(); // Skip body parsing for file upload routes
+    return next();
   }
   express.json()(req, res, () => {
     express.urlencoded({ extended: true })(req, res, next);

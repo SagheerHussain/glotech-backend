@@ -4,9 +4,26 @@ const cloudinary = require("../cloudinary");
 // Create Testimonial - Adds a new testimonial
 const createTestimonial = async (req, res) => {
   try {
-    const { name, rating, review } = req.body;
+    const {
+      name_en,
+      name_ar,
+      name_fr,
+      rating,
+      review_en,
+      review_ar,
+      review_fr,
+    } = req.body;
 
-    if (!name || !rating || !req.file || !review) {
+    if (
+      !name_en ||
+      !rating ||
+      !req.file ||
+      !review_en ||
+      !review_ar ||
+      !review_fr ||
+      !name_ar ||
+      !name_fr
+    ) {
       return res
         .status(400)
         .json({ message: "All fields are required", success: false });
@@ -16,17 +33,17 @@ const createTestimonial = async (req, res) => {
 
     const newTestimonial = await Testimonial.create({
       name: {
-        en: name.en,
-        ar: name.ar,
-        fr: name.fr,
+        en: name_en,
+        ar: name_ar,
+        fr: name_fr,
+      },
+      review: {
+        en: review_en,
+        ar: review_ar,
+        fr: review_fr,
       },
       rating,
       image: imgPath.secure_url,
-      review: {
-        en: review.en,
-        ar: review.ar,
-        fr: review.fr,
-      },
     });
 
     return res.status(201).json({
@@ -63,10 +80,10 @@ const getTestimonials = async (req, res) => {
 };
 
 // Get a single Testimonial - Retrieves a specific testimonial by ID
-const getTestimonial = async (req, res) => {
+const getTestimonialById = async (req, res) => {
   try {
     const { id } = req.params;
-    const testimonial = await Testimonial.findById(id);
+    const testimonial = await Testimonial.findById({ _id: id });
 
     if (!testimonial) {
       return res
@@ -90,28 +107,38 @@ const getTestimonial = async (req, res) => {
 const updateTestimonial = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, rating, review } = req.body;
+    const {
+      name_en,
+      name_ar,
+      name_fr,
+      rating,
+      review_en,
+      review_ar,
+      review_fr,
+    } = req.body;
 
     let imgPath = "";
     if (req.file) {
       imgPath = await cloudinary.uploader.upload(req.file.path);
     }
 
+    const testimonial = await Testimonial.findById({ _id: id });
+
     const updatedTestimonial = await Testimonial.findByIdAndUpdate(
       id,
       {
         $set: {
           name: {
-            en: name.en,
-            ar: name.ar,
-            fr: name.fr,
+            en: name_en || testimonial.name.en,
+            ar: name_ar || testimonial.name.ar,
+            fr: name_fr || testimonial.name.fr,
           },
-          rating,
-          image: imgPath ? imgPath.secure_url : updatedTestimonial.image,
+          rating: rating || testimonial.rating,
+          image: imgPath ? imgPath.secure_url : testimonial.image,
           review: {
-            en: review.en,
-            ar: review.ar,
-            fr: review.fr,
+            en: review_en || testimonial.review.en,
+            ar: review_ar || testimonial.review.ar,
+            fr: review_fr || testimonial.review.fr,
           },
         },
       },
@@ -144,20 +171,27 @@ const deleteTestimonial = async (req, res) => {
     const deletedTestimonial = await Testimonial.findByIdAndDelete({ _id: id });
 
     if (!deletedTestimonial) {
-      return res.status(404).json({ message: "Testimonial not found", success: false });
+      return res
+        .status(404)
+        .json({ message: "Testimonial not found", success: false });
     }
 
-    return res.json({ message: "Testimonial deleted successfully", success: true });
+    return res.json({
+      message: "Testimonial deleted successfully",
+      success: true,
+    });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error deleting testimonial", success: false });
+    return res
+      .status(500)
+      .json({ message: "Error deleting testimonial", success: false });
   }
 };
 
 module.exports = {
   createTestimonial,
   getTestimonials,
-  getTestimonial,
+  getTestimonialById,
   updateTestimonial,
   deleteTestimonial,
 };

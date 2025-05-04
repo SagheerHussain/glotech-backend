@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../upload");
 
 // Import Controller
-const { createTestimonial, getTestimonials, getTestimonial, updateTestimonial, deleteTestimonial } = require("../controllers/testimonial.Controller");
+const { createTestimonial, getTestimonials, getTestimonialById, updateTestimonial, deleteTestimonial } = require("../controllers/testimonial.Controller");
 
 // Routes
-router.post("/", createTestimonial);
+router.post("/", upload.single("image"), createTestimonial);
 router.get("/", getTestimonials);
-router.get("/get", getTestimonial);
-router.put("/update", updateTestimonial);
-router.delete("/delete", deleteTestimonial);
+router.get("/get/:id", getTestimonialById);
+router.put("/update/:id", upload.single("image"), updateTestimonial);
+router.delete("/delete/:id", deleteTestimonial);
 
 module.exports = router;
