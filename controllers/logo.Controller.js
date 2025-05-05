@@ -46,19 +46,40 @@ const getLogo = async (req, res) => {
   }
 };
 
+// Get a specific logo by ID
+const getLogoById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const logo = await Logo.findById({ _id: id });
+    if (!logo) {
+      return res
+        .status(404)
+        .json({ message: "Logo not found", success: false });
+    }
+    return res.json({ data: logo, success: true, message: "Logo Retrieved" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Error fetching logo", success: false });
+  }
+};
+
 // Update Logo by ID
 const updateLogo = async (req, res) => {
   try {
-    const { id } = useParams;
+    const { id } = req.params;
     let imgPath = "";
     if (req.file) {
       imgPath = await cloudinary.uploader.upload(req.file.path);
     }
 
+    const logo = await Logo.findById({ _id: id });
+
     const updatedLogo = await Logo.findByIdAndUpdate(
       { _id: id },
       {
-        image: imgPath ? imgPath.secure_url : updatedLogo.image,
+        image: imgPath ? imgPath.secure_url : logo.image,
       },
       { new: true } // Return the updated document
     );
@@ -97,13 +118,16 @@ const deleteLogo = async (req, res) => {
     return res.json({ message: "Logo deleted successfully", success: true });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error deleting logo", success: false });
+    return res
+      .status(500)
+      .json({ message: "Error deleting logo", success: false });
   }
 };
 
 module.exports = {
   createLogo,
   getLogo,
+  getLogoById,
   updateLogo,
   deleteLogo,
 };
