@@ -12,6 +12,7 @@ connectDB();
 
 const allowedOrigins = [
   "http://localhost:5173", // Localhost (development)
+  "https://glotech-ksa.com"
 ];
 
 // PORT
