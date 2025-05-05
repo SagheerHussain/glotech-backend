@@ -19,7 +19,7 @@ const createLogo = async (req, res) => {
 
     return res
       .status(201)
-      .json({ message: "Logo created successfully", newLogo, success: true });
+      .json({ message: "Logo created successfully", data: newLogo, success: true });
   } catch (error) {
     console.error(error);
     return res
