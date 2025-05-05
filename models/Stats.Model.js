@@ -4,6 +4,7 @@ const serviceStatsSchema = new mongoose.Schema({
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
   statOne: {
     count: { type: String, required: true },
+    symbol: { type: String, required: true },
     title: {
       en: { type: String, required: true },
       ar: { type: String, required: true },
@@ -12,6 +13,7 @@ const serviceStatsSchema = new mongoose.Schema({
   },
   statTwo: {
     count: { type: String, required: true },
+    symbol: { type: String, required: true },
     title: {
       en: { type: String, required: true },
       ar: { type: String, required: true },
@@ -20,6 +22,7 @@ const serviceStatsSchema = new mongoose.Schema({
   },
   statThree: {
     count: { type: String, required: true },
+    symbol: { type: String, required: true },
     title: {
       en: { type: String, required: true },
       ar: { type: String, required: true },
@@ -28,6 +31,7 @@ const serviceStatsSchema = new mongoose.Schema({
   },
   statFour: {
     count: { type: String, required: true },
+    symbol: { type: String, required: true },
     title: {
       en: { type: String, required: true },
       ar: { type: String, required: true },

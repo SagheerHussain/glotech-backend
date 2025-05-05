@@ -4,9 +4,9 @@ const Category = require("../models/Category.Model");
 // Create Service Stats
 const createStats = async (req, res) => {
   try {
-    const { category, statOne, statTwo, statThree, statFour } = req.body;
+    const { category, statOne, statTwo, statThree, statFour, symbol } = req.body;
 
-    if (!category || !statOne || !statTwo || !statThree || !statFour) {
+    if (!category || !statOne || !statTwo || !statThree || !statFour || !symbol) {
       return res
         .status(400)
         .json({ message: "Category and stats are required", success: false });
@@ -27,6 +27,7 @@ const createStats = async (req, res) => {
       statTwo,
       statThree,
       statFour,
+      symbol,
     });
 
     return res.status(201).json({
@@ -93,7 +94,7 @@ const getStatsById = async (req, res) => {
 const updateStats = async (req, res) => {
   try {
     const { id } = req.params;
-    const { category, statOne, statTwo, statThree, statFour } = req.body;
+    const { category, statOne, statTwo, statThree, statFour, symbol } = req.body;
 
     const isExist = await Category.findById({ _id: category });
 
@@ -117,6 +118,7 @@ const updateStats = async (req, res) => {
         statTwo,
         statThree,
         statFour,
+        symbol,
       },
       { new: true } // Return the updated document
     );
