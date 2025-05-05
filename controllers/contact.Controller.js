@@ -3,18 +3,16 @@ const Contact = require("../models/Contact.Model");
 // Create Contact - Adds a new contact
 const createContact = async (req, res) => {
   try {
-    const { location, email, phone } = req.body;
+    const { location_en, location_ar, location_fr, email, phone } = req.body;
 
-    if (!location || !email || !phone) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (!location_en || !location_ar || !location_fr || !email || !phone) {
+      return res
+        .status(400)
+        .json({ message: "All fields are required", success: false });
     }
 
     const newContact = new Contact({
-      location: {
-        en: location.en,
-        ar: location.ar,
-        fr: location.fr,
-      },
+      location: { en: location_en, ar: location_ar, fr: location_fr },
       email,
       phone,
     });
@@ -22,10 +20,16 @@ const createContact = async (req, res) => {
     await newContact.save();
     return res
       .status(201)
-      .json({ message: "Contact created successfully", newContact });
+      .json({
+        message: "Contact created successfully",
+        data: newContact,
+        success: true,
+      });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error creating contact" });
+    return res
+      .status(500)
+      .json({ message: "Error creating contact", success: false });
   }
 };
 
@@ -34,29 +38,49 @@ const getContacts = async (req, res) => {
   try {
     const contacts = await Contact.find();
     if (contacts.length === 0) {
-      return res.status(404).json({ message: "No contact found" });
+      return res
+        .status(404)
+        .json({ message: "No contact found", success: false });
     }
-    return res.json(contacts);
+    return res
+      .status(200)
+      .json({
+        data: contacts,
+        message: "Contacts fetched successfully",
+        success: true,
+      });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error fetching contacts" });
+    return res
+      .status(500)
+      .json({ message: "Error fetching contacts", success: false });
   }
 };
 
 // Get a specific Contact - Retrieves a contact by ID
-const getContact = async (req, res) => {
+const getContactById = async (req, res) => {
   try {
     const { id } = req.params;
     const contact = await Contact.findById({ _id: id });
 
     if (!contact) {
-      return res.status(404).json({ message: "Contact not found" });
+      return res
+        .status(404)
+        .json({ message: "Contact not found", success: false });
     }
 
-    return res.json(contact);
+    return res
+      .status(200)
+      .json({
+        data: contact,
+        message: "Contact fetched successfully",
+        success: true,
+      });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error fetching contact" });
+    return res
+      .status(500)
+      .json({ message: "Error fetching contact", success: false });
   }
 };
 
@@ -64,21 +88,17 @@ const getContact = async (req, res) => {
 const updateContact = async (req, res) => {
   try {
     const { id } = req.params;
-    const { location, email, phone } = req.body;
+    const { location_en, location_ar, location_fr, email, phone } = req.body;
 
-    if (!location || !email || !phone) {
+    if (!location_en || !location_ar || !location_fr || !email || !phone) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     const updatedContact = await Contact.findByIdAndUpdate(
-      {},
+      { _id: id },
       {
         $set: {
-          location: {
-            en: location.en,
-            ar: location.ar,
-            fr: location.fr,
-          },
+          location: { en: location_en, ar: location_ar, fr: location_fr },
           email,
           phone,
         },
@@ -87,16 +107,21 @@ const updateContact = async (req, res) => {
     );
 
     if (!updatedContact) {
-      return res.status(404).json({ message: "Contact not found" });
+      return res
+        .status(404)
+        .json({ message: "Contact not found", success: false });
     }
 
-    return res.json({
+    return res.status(200).json({
       message: "Contact updated successfully",
-      updatedContact,
+      data: updatedContact,
+      success: true,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error updating contact" });
+    return res
+      .status(500)
+      .json({ message: "Error updating contact", success: false });
   }
 };
 
@@ -104,13 +129,17 @@ const updateContact = async (req, res) => {
 const deleteContact = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedContact = await Contact.findByIdAndDelete();
+    const deletedContact = await Contact.findByIdAndDelete({ _id: id });
 
     if (!deletedContact) {
-      return res.status(404).json({ message: "Contact not found" });
+      return res
+        .status(404)
+        .json({ message: "Contact not found", success: false });
     }
 
-    return res.json({ message: "Contact deleted successfully" });
+    return res
+      .status(200)
+      .json({ message: "Contact deleted successfully", success: true });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Error deleting contact" });
@@ -120,7 +149,7 @@ const deleteContact = async (req, res) => {
 module.exports = {
   createContact,
   getContacts,
-  getContact,
+  getContactById,
   updateContact,
   deleteContact,
 };
