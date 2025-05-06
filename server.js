@@ -56,6 +56,7 @@ const teamsRoute = require("./routes/team.Route");
 const testimonialsRoute = require("./routes/testimonial.Route");
 const colorsRoute = require("./routes/color.Route");
 const categoryRoute = require("./routes/category.Route");
+const userRoute = require("./routes/user.Route");
 
 // Welcome Message
 app.get("/", (req, res) => {
@@ -73,8 +74,9 @@ app.use("/api/teams", teamsRoute);
 app.use("/api/testimonials", testimonialsRoute);
 app.use("/api/colors", colorsRoute);
 app.use("/api/category", categoryRoute);
+app.use("/api/user", userRoute);
 
 // Server Listen
-app.listen(PORT, () => {
+app.listen(PORT, () => { 
   console.log(`Server is running on port ${PORT}`);
 });
