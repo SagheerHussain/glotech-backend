@@ -27,8 +27,10 @@ const registerAccount = async (req, res) => {
 const loginAccount = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(email, password);
 
     const user = await User.findOne({ email });
+    console.log(user);
 
     if (!user) {
       return res
@@ -37,6 +39,7 @@ const loginAccount = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
+    console.log(passwordMatch);
     if (!passwordMatch) {
       return res
         .status(200)
@@ -46,9 +49,11 @@ const loginAccount = async (req, res) => {
     const token = await jwt.sign({ email: user.email }, process.env.JWT_KEY, {
       expiresIn: "1d",
     });
+    console.log(token);
 
     res.status(200).json({ success: true, token, user });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
