@@ -8,7 +8,7 @@ const registerAccount = async (req, res) => {
 
     const isExist = await User.findOne({ email });
     if (isExist)
-      res.json({ message: "A user with this email is already exist", success: false });
+      res.status(200).json({ message: "A user with this email is already exist", success: false });
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -20,7 +20,8 @@ const registerAccount = async (req, res) => {
     });
     res.status(200).json({ success: true, user: newUser, message: "User created successfully" });
   } catch (error) {
-    res.json({ success: false, message: "Internal server error" });
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
