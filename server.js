@@ -33,17 +33,8 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  if (
-    req.headers["content-type"] &&
-    req.headers["content-type"].includes("multipart/form-data")
-  ) {
-    return next();
-  }
-  express.json()(req, res, () => {
-    express.urlencoded({ extended: true })(req, res, next);
-  });
-});
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Import Routes
 const aboutRoute = require("./routes/about.Route");
