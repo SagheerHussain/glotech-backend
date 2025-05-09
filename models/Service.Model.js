@@ -24,11 +24,11 @@ const serviceSchema = new mongoose.Schema(
           ar: { type: String, required: true },
           fr: { type: String, required: true },
         },
-        images: [
-          {
-            url: { type: String }, // URL of the image
-          },
-        ],
+      },
+    ],
+    images: [
+      {
+        url: { type: String }, // URL of the image
       },
     ],
     category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },

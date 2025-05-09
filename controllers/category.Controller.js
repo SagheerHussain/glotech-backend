@@ -1,18 +1,44 @@
 const Category = require("../models/Category.Model");
+const cloudinary = require("../cloudinary");
 
 // Create Category
 const createCategory = async (req, res) => {
   try {
-    const { name, slug } = req.body;
+    const {
+      name_en,
+      name_ar,
+      name_fr,
+      description_en,
+      description_ar,
+      description_fr,
+      slug,
+    } = req.body;
 
-    if (!name || !slug) {
+    if (
+      !name_en ||
+      !name_ar ||
+      !name_fr ||
+      !description_en ||
+      !description_ar ||
+      !description_fr ||
+      !slug ||
+      !req.file
+    ) {
       return res
         .status(400)
         .json({ message: "All fields are required", success: false });
     }
 
+    const imgPath = await cloudinary.uploader.upload(req.file.path);
+
     const newCategory = await Category.create({
-      name: { en: name.en, ar: name.ar, fr: name.fr },
+      name: { en: name_en, ar: name_ar, fr: name_fr },
+      description: {
+        en: description_en,
+        ar: description_ar,
+        fr: description_fr,
+      },
+      image: imgPath.secure_url,
       slug,
     });
 
@@ -74,19 +100,62 @@ const getCategory = async (req, res) => {
   }
 };
 
+// Get Category by Slug
+const getCategoryBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const category = await Category.findOne({ slug });
+
+    if (!category) {
+      return res
+        .status(404)
+        .json({ message: "Category not found", success: false });
+    }
+
+    return res.json({
+      data: category,
+      success: true,
+      message: "Category retrieved successfully",
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error fetching category", success: false });
+  }
+};
+
 // Update Category
 const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, slug } = req.body;
+    const {
+      name_en,
+      name_ar,
+      name_fr,
+      description_en,
+      description_ar,
+      description_fr,
+      slug,
+    } = req.body;
+
+    let imgPath = "";
+    if (req.file) {
+      imgPath = await cloudinary.uploader.upload(req.file.path);
+    }
+
+    const category = await Category.findById({ _id: id });
 
     const updateCategory = await Category.findByIdAndUpdate(
       { _id: id },
       {
-        $set: {
-          name: { en: name.en, ar: name.ar, fr: name.fr },
-          slug,
+        name: { en: name_en, ar: name_ar, fr: name_fr },
+        description: {
+          en: description_en,
+          ar: description_ar,
+          fr: description_fr,
         },
+        image: imgPath ? imgPath.secure_url : category.image,
+        slug,
       },
       { new: true }
     );
@@ -137,6 +206,7 @@ module.exports = {
   createCategory,
   getCategoriesLists,
   getCategory,
+  getCategoryBySlug,
   updateCategory,
   deleteCategory,
 };
