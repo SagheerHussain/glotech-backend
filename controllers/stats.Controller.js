@@ -4,9 +4,9 @@ const Category = require("../models/Category.Model");
 // Create Service Stats
 const createStats = async (req, res) => {
   try {
-    const { category, statOne, statTwo, statThree, statFour, symbol } = req.body;
+    const { category, statOne, statTwo, statThree, statFour } = req.body;
 
-    if (!category || !statOne || !statTwo || !statThree || !statFour || !symbol) {
+    if (!category || !statOne || !statTwo || !statThree || !statFour) {
       return res
         .status(400)
         .json({ message: "Category and stats are required", success: false });
@@ -27,7 +27,6 @@ const createStats = async (req, res) => {
       statTwo,
       statThree,
       statFour,
-      symbol,
     });
 
     return res.status(201).json({
@@ -90,11 +89,36 @@ const getStatsById = async (req, res) => {
   }
 };
 
+// Get Service Stats by Category
+const getStatsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const stats = await Stats.find({ category }).populate("category");
+
+    if (!stats.length) {
+      return res
+        .status(404)
+        .json({ message: "No stats found for this category", success: false });
+    }
+
+    return res.status(200).json({
+      data: stats,
+      success: true,
+      message: "Stats retrieved successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Error fetching service stats", success: false });
+  }
+};
+
 // Update Service Stats
 const updateStats = async (req, res) => {
   try {
     const { id } = req.params;
-    const { category, statOne, statTwo, statThree, statFour, symbol } = req.body;
+    const { category, statOne, statTwo, statThree, statFour } = req.body;
 
     const isExist = await Category.findById({ _id: category });
 
@@ -118,7 +142,6 @@ const updateStats = async (req, res) => {
         statTwo,
         statThree,
         statFour,
-        symbol,
       },
       { new: true } // Return the updated document
     );
@@ -170,6 +193,7 @@ module.exports = {
   createStats,
   getStats,
   getStatsById,
+  getStatsByCategory,
   updateStats,
   deleteStats,
 };

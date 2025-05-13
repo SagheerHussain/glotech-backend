@@ -6,6 +6,7 @@ const {
   createStats,
   getStats,
   getStatsById,
+  getStatsByCategory,
   updateStats,
   deleteStats,
 } = require('../controllers/stats.Controller');
@@ -14,6 +15,7 @@ const {
 router.post('/', createStats); // Create service stats
 router.get('/', getStats); // Get all service stats
 router.get('/get/:id', getStatsById); // Get a specific service stats by ID
+router.get('/category/:category', getStatsByCategory); // Get a specific service stats by Category
 router.put('/update/:id', updateStats); // Update service stats by ID
 router.delete('/delete/:id', deleteStats); // Delete service stats by ID
 

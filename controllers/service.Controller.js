@@ -1,4 +1,5 @@
 const Service = require("../models/Service.Model");
+const Category = require("../models/Category.Model");
 const cloudinary = require("../cloudinary");
 
 // Create Service - Adds a new service
@@ -114,13 +115,13 @@ const getService = async (req, res) => {
 const getServiceByCategory = async (req, res) => {
   try {
     const { category } = req.params;
+
     const service = await Service.find({ category }).populate("category");
     if (!service) {
       return res
         .status(200)
         .json({ message: "No service found", success: true });
     }
-    console.log("service", service);
     return res.json({
       data: service,
       success: true,
