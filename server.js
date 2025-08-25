@@ -48,7 +48,7 @@ const testimonialsRoute = require("./routes/testimonial.Route");
 const colorsRoute = require("./routes/color.Route");
 const categoryRoute = require("./routes/category.Route");
 const userRoute = require("./routes/user.Route");
-const technologyRoute = require("./routes/technology.route");
+const technologyRoute = require("./routes/technology.Route");
 
 // Welcome Message
 app.get("/", (req, res) => {
