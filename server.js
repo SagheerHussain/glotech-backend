@@ -48,7 +48,6 @@ const testimonialsRoute = require("./routes/testimonial.Route");
 const colorsRoute = require("./routes/color.Route");
 const categoryRoute = require("./routes/category.Route");
 const userRoute = require("./routes/user.Route");
-const techRoute = require("./routes/tech.Route");
 
 // Welcome Message
 app.get("/", (req, res) => {
@@ -67,7 +66,6 @@ app.use("/api/testimonials", testimonialsRoute);
 app.use("/api/colors", colorsRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/user", userRoute);
-app.use("/api/technology", techRoute);
 
 // Server Listen
 app.listen(PORT, () => { 
